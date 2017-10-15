@@ -74,7 +74,86 @@ bitset
 
 ----------------------------------------------------------
 
+
 =====================================
 ASSOCIATIVE CONTAINER
 =====================================
 
+Item 19. Understand the difference between equality and equivalence.
+equality, which is based on operator==
+Equivalence is based on the relative ordering of object values in a sorted range. !c.key_comp()(x, y) && !c.key_comp()(y, x)
+The standard associative containers are kept in sorted order, so each container must have a comparison function (less, by default) that defines how to keep things sorted.
+
+---------------------------------------------------------
+
+Item 20. Specify comparison types for associative containers of pointers.
+Anytime you create associative containers of pointers, figure you're probably going to have to specify the container's comparison type, too. 
+Most of the time, your comparison type will just dereference the pointers and compare the pointed-to objects.
+struct DereferenceLess {
+template <typename PtrType>
+bool operator()(PtrType pT1, // parameters are passed by
+		PtrType pT2) const // value, because we expect them
+	{   // to be (or to act like) pointers
+		return *pT1 < *pT2;
+	}
+};
+
+
+Usage : set<string*, DereferenceLess> ssp;
+
+---------------------------------------------------------
+
+Item 21. Always have comparison functions return false for equal values.
+
+---------------------------------------------------------
+
+Item 22. Avoid in-place key modification in set and multiset.
+
+Key is const in map and multimap but it is non-const in set and multi-set but some vendors provide const key in set too. 
+
+Dont modify key in set as it can corrupt sorting order of keys in set.
+If you want to modify content of key which is not  a part of comparator then do it like this: 
+if (i != se.end()) { // cast away
+	const_cast<Employee&>(*i).setTitle("Corporate Deity"); //constness
+}
+Use "Employee&" not "Employee" because by using "Employee" it will modify temporary object not actual object.
+
+Or 
+Follow five step process:
+EmplDSet::iterator i =
+se.find(selectedlD); // Step 1: find element to change
+
+if(i!=se.end()){
+	Employee e(*i); // Step 2: copy the element
+	se.erase(i++); // Step 3: remove the element; increment the iterator to maintain its validity (see Item 9)
+	e.setTitle("Corporate Deity"); // Step 4: modify the copy
+	se.insert(i, e); // Step 5: insert new value; hint that its location is the same as that of the
+}
+------------------------------------------------------------
+
+Item 23. Consider replacing associative containers with sorted vectors.
+
+Assuming our data structures are big enough, they'll be split across multiple memory pages, but the vector will require fewer pages than the associative container.
+Bottom Line : 
+Storing data in a sorted vector is likely to consume less memory than storing the same data in a standard associative container, and searching a sorted vector via binary search is likely to be faster than searching a standard associative container when page faults are taken into account.
+You need to write comparator for pair<key,value> if you choose vector instead of associative container.
+
+When to use sorted vector over associative containers:
+your program uses the data structure in the phased manner that is first only insertions and then only lookups
+It makes sense to consider using a sorted vector instead of an associative container only when you know that your data structure is used in such a way that lookups are almost never mixed with insertions and erasures because inserting on sorted vector can be expensive operation.
+
+-------------------------------------------------------------
+
+Item 24. Choose carefully between map::operator[] and map-insert when efficiency is important
+when an "add" is performed, map-insert saves you three function calls: 
+1) one to create a temporary default-constructed Widget object, 
+2) one to destruct that temporary object, and 
+3) one to Widget's assignment operator.
+
+operator[] is preferable when updating the value of an element that's already in the map.	
+m[k] = v; // use operator[] to update k's value to be v
+
+m.insert(
+	IntWidgetMap::value_type(k, v)).first->second = v; // use insert to update k's value to be v
+
+-------------------------------------------------------------
