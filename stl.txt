@@ -1,0 +1,80 @@
+Made this guide as a notes after reading Effective STL by scott meyers
+==================================
+STRING AND VECTOR
+==================================
+
+Item 13. Prefer vector and string to dynamically allocated arrays.
+string implementation may involve refernce counting so must see their document or use vector<char>
+-----------------------------------------------------
+
+Item 14. Use reserve to avoid unnecessary reallocations.
+
+vector<int> v;
+v.reserve(1000);
+for (int i = 1; i <= 1000; ++i) v.push_back(i);
+This should result in zero reallocations during the loop.
+
+Reallocation in vector invalidate iterators, pointer and references
+
+There are two common ways to use reserve to avoid unneeded reallocations. 
+>> The first is applicable when you know exactly or approximately how many elements will ultimately end up in your container. 
+In that case, as in the vector code above, you simply reserve the appropriate amount of space in advance. 
+
+>> The second way is to reserve the maximum space you could ever need. then, once you've added all your data, trim off any excess capacity.
+
+--------------------------------------------------------
+
+Item 15. Be aware of variations in string implementations. 
+Different vendors can have different implementation of string.
+string objects may range in size from one to at least seven times the size of char* pointers.
+
+--------------------------------------------------------
+
+Item 16. Know how to pass vector and string data to legacy APIs.
+For vector:
+if (!v.empty()) {
+doSomething(&v[0], v.size());
+}
+Beware : Dont use v.begin() in place of &v[0]
+
+For string:
+c_str()
+
+The approach to getting a pointer to container data that works for vectors isn't reliable for strings, because 
+(1) the data for strings are not guaranteed to be stored in contiguous memory, and 
+(2) the internal representation of a string is not guaranteed to end with a null character.
+
+----------------------------------------------------------
+
+Item 17. Use "the swap trick" to trim excess capacity
+//shrink to fit
+vector<Contestant>(contestants).swap(contestants); 
+string(s).swap(s);
+
+To clear container : 
+vector<Contestant> v;
+string s;
+vector<Contestant>().swap(v); //clear v and minimize its capacity
+string().swap(s); // clear s and minimize its capacity
+
+----------------------------------------------------------
+
+Item 18. Avoid using vector<bool>:
+Two things wrong with vector<bool>. 
+First, it's not an STL container. 
+Second, it doesn't hold bools.
+
+vector<bool> v;
+bool *pb = &v[0]; // error! the expression on the right is of type vector<bool>::reference*, not bool*
+Because it won't compile, vector<bool> fails to satisfy the requirements for STL containers.
+
+Alternative to use : 
+deque<bool> // it would not allocate in contiguous manner like vector.
+bitset
+
+----------------------------------------------------------
+
+=====================================
+ASSOCIATIVE CONTAINER
+=====================================
+
