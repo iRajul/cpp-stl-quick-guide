@@ -157,3 +157,69 @@ m.insert(
 	IntWidgetMap::value_type(k, v)).first->second = v; // use insert to update k's value to be v
 
 -------------------------------------------------------------
+Item 25 : hash_map, hash_set 
+TODO
+
+--------------------------------------------------------------
+
+=========================
+ITERATORS
+=========================
+
+Item 26. Prefer iterator to const iterator, reverse_iterator, and const_reverse_iterator.
+
+1) Some versions of insert and erase require iterators. 
+	If you want to call those functions, you're going to have to produce iterators, const and reverse iterators won't do.
+	Example :
+	iterator insert(iterator position, const T& x);
+	iterator erase(iterator position);
+	iterator erase(iterator rangeBegin, iterator rangeEnd);
+	
+2) It's not possible to implicitly convert a const iterator to an iterator, and 
+	the technique described in Item 27 for generating an iterator from a const_iterator is neither universally applicable nor guaranteed to be efficient.
+
+3) Conversion from a reverse_iterator to an iterator may require iterator adjustment after the conversion. Item 28 explains when and why.
+
+4) comparison of const iterator with non-const iterator would not compile.
+	if (ci == i) // not compile.
+	if (i == ci) // It works though 
+
+--------------------------------------------------------------
+
+Item 27. Use distance and advance to convert a container's const_iterators to iterators.
+
+Iter i(const_cast<lter>(ci));// It would not compile because const_iterator and iterator are of different type except for string and vector.
+
+Make a non-const iterator and move it to where const iterator is pointing.
+Iter i(d.begin()); // initialize i to d.begin() 
+advance(i, distance<ConstIter>(i, ci));//figure the distance between i and ci (as const_iterators), then move i that distance.
+We need to specify "ConstIter" while calling distance because type of argument for distance function should be same.
+
+-------------------------------------------------------------- 
+
+Item 28. Understand how to use a reverse_iterator's base iterator.
+
+Lets say there is vector of 5 element
+|--------------------
+| 1 | 2 | 3 | 4 | 5 |
+|--------------------
+
+vector<int>::reverse_iterator ri = // make ri point to the 3
+find(v.rbegin(), v.rend(), 3);
+vector<int>::iterator i(ri.base());// it points to 4
+
+1) For insertion : using reverse_iterator we insert using ri.base().
+|-------------------------
+| 1 | 2 | 3 | 99 | 4 | 5 |
+|-------------------------
+Example  : Insert 99 at position of 3 from right to left.
+ri.begin would do the trick.
+
+2) For deletion : Delete the element pointed by ri.
+v.erase(++ri).base()); // erase the element pointed to by ri; this should always compile.
+
+---------------------------------------------------------------
+
+Item 29 : TODO
+
+---------------------------------------------------------------
