@@ -223,3 +223,59 @@ v.erase(++ri).base()); // erase the element pointed to by ri; this should always
 Item 29 : TODO
 
 ---------------------------------------------------------------
+============================
+ALGORITHMS
+============================
+
+Item 30. Make sure destination ranges are big enough.
+
+Transform:
+vector<int> results; // apply transmogrify to
+transform(values.begin(), values.end(), //each object in values,
+back_inserter(results), //inserting the return
+transmogrify);
+
+Use reserve to save time in allocation using:
+results.reserve(results.size() + values.size());
+
+Then use back_inserter, front_inserter , inserter.
+
+If enough space is there in result and you want to overwrite result than you can use:
+transform(values.begin(), values.end(), // overwrite the first
+results.begin(), // values.size() elements of
+transmogrify);
+
+-----------------------------------------------------------------
+
+Item 31. Know your sorting options.
+
+1) partial_sort:(Not stable)
+Rearranges the elements in the range [first,last), in such a way that the
+elements before middle are the smallest elements in the entire range and 
+are sorted in ascending order, while the remaining elements are left 
+without any specific order.
+
+partial_sort (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare);
+// put the best 20 elements (in order) at the front of widgets.
+
+If all you care about is that the 20 best but don't care order of 20 element than use nth_element.
+2) nth_element:(similar to partition algo)(Not Stable)
+nth_element is a partial sorting algorithm that rearranges elements in [first, last) such that:
+The element pointed at by nth is changed to whatever element would occur in that position if [first, last) was sorted.
+All of the elements before this new nth element are less than or equal to the elements after the new nth element.
+
+nth_element (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare); 
+// put the best 20 elements at the front of widgets, but don't worry about their order.
+
+3) For stable sorting use stable_sort
+
+4) partition and stable_partition
+Partition range in two
+Rearranges the elements from the range [first,last), in such a way that all the elements 
+for which pred returns true precede all those for which it returns false. The iterator 
+returned points to the first element of the second group.
+vector<Widget>::iterator goodEnd = partition(widgets.begin(), widgets.end(), hasAcceptableQuality);
+// move all widgets satisfying hasAcceptableQuality to the front of widgets, 
+// and return an iterator to the first widget that isn't satisfactory.
+
+------------------------------------------------------------------
