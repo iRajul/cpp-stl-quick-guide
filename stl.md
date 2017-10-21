@@ -1,8 +1,7 @@
->> Made this guide as a notes after reading Effective STL by scott meyers
+> Made this guide as a notes after reading Effective STL by scott meyers
 
-==================================
-CONTAINERS
-==================================
+
+### CONTAINERS
 
 ### Item 1. Choose your containers with care.
 1) The standard STL sequence containers, vector, string, deque, and list.
@@ -151,12 +150,7 @@ TODO
 ---
 
 
-
-
-
-==================================
-STRING AND VECTOR
-==================================
+### STRING AND VECTOR
 
 ### Item 13. Prefer vector and string to dynamically allocated arrays.
 string implementation may involve refernce counting so must see their document or use `vector<char>`
@@ -236,9 +230,8 @@ Alternative to use :
 
 ---
 
-=====================================
-ASSOCIATIVE CONTAINER
-=====================================
+### ASSOCIATIVE CONTAINER
+
 ### Item 19. Understand the difference between equality and equivalence.
 Equality, which is based on `operator==`
 Equivalence is based on the relative ordering of object values in a sorted range.
@@ -329,9 +322,8 @@ Item 25 : hash_map, hash_set
 TODO
 
 --------------------------------------------------------------
-=========================
-ITERATORS
-=========================
+
+### ITERATORS
 
 Item 26. Prefer iterator to const iterator, reverse_iterator, and const_reverse_iterator.
 
@@ -391,9 +383,7 @@ Item 29 : TODO
 
 ---------------------------------------------------------------
 
-============================
-ALGORITHMS
-============================
+### ALGORITHMS
 
 Item 30. Make sure destination ranges are big enough.
 
