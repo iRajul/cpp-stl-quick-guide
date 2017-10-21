@@ -1,5 +1,6 @@
 > Made this guide as a notes after reading Effective STL by scott meyers
 
+---
 
 ### CONTAINERS
 
@@ -104,7 +105,7 @@ pointers before the container is destroyed.
 
 * For Associative containers:
 `c.erase(1963);`
->> the associative container erase member function has the advantage of being based on equivalence instead of equality,  a distinction whose importance is explained in Item 19.
+> the associative container erase member function has the advantage of being based on equivalence instead of equality,  a distinction whose importance is explained in Item 19.
 
 2) Eliminate every object for which the following predicate (see Item 39) returns true:
 * For vector, string, deque
