@@ -114,20 +114,21 @@ pointers before the container is destroyed.
 `c.remove_if(badValue);`
 
 * For associative containers:
-* >> Less Efficient:
-`remove_copy_if(c.begin(), c.end(), inserter( goodValues, goodValues.end()), badValue):`
-// copy unremoved values from c to goodValues
-c.swap(goodValues):
-
-* More efficient: 
-```
-AssocContainer<int> c;
-for (AssocContainer<int>::iterator i = c.begin(); i != c.end(); ){
-	if (badValue(*I)) c.erase(i++); 
-	else ++i; 
-}
-//the 3rd part of the for loop is empty; i is now incremented below for bad values, pass the current i to erase and increment i as a side effect; for good values, just increment i
-```
+	* Less Efficient:
+	```
+	remove_copy_if(c.begin(), c.end(), inserter( goodValues, goodValues.end()), badValue):
+	// copy unremoved values from c to goodValues
+	c.swap(goodValues):
+	```
+	* More efficient: 
+	```
+	AssocContainer<int> c;
+	for (AssocContainer<int>::iterator i = c.begin(); i != c.end(); ){
+		if (badValue(*I)) c.erase(i++); 
+		else ++i; 
+	}
+	//the 3rd part of the for loop is empty; i is now incremented below for bad values, pass the current i to erase and increment i as a side effect; for good values, just increment i
+	```
 To do something inside the loop (in addition to erasing objects):
 * If the container is a standard sequence container, write a loop to walk the container elements, being sure to update your iterator with erase's return value each time von call it.
 * If the container is a standard associative container, write a loop to walk the container elements, being sure to postincrement your iterator when you pass it to erase.
@@ -188,7 +189,7 @@ if (!v.empty()) {
 doSomething(&v[0], v.size());
 }
 ```
->> Beware : Dont use v.begin() in place of &v[0]
+> Beware : Dont use v.begin() in place of &v[0]
 
 For string:
 `c_str()`
@@ -200,7 +201,7 @@ The approach to getting a pointer to container data that works for vectors isn't
 ----------------------------------------------------------
 
 ### Item 17. Use "the swap trick" to trim excess capacity
-//shrink to fit
+shrink to fit :
 ```
 vector<Contestant>(contestants).swap(contestants); 
 string(s).swap(s);
@@ -417,22 +418,20 @@ transmogrify);
 
 ### Item 31. Know your sorting options.
 
-1) `partial_sort`:(Not stable)
+1) `partial_sort` : (Not stable)  
 Rearranges the elements in the range [first,last), in such a way that the
 elements before middle are the smallest elements in the entire range and 
 are sorted in ascending order, while the remaining elements are left 
-without any specific order.
+without any specific order.  
+`partial_sort (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare);`  
+  // put the best 20 elements (in order) at the front of widgets...
+  If all you care about is that the 20 best but don't care order of 20 element than use nth_element.
 
-`partial_sort (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare);`
-// put the best 20 elements (in order) at the front of widgets.
-
-If all you care about is that the 20 best but don't care order of 20 element than use nth_element.
-2) `nth_element`:(similar to partition algo)(Not Stable)
-nth_element is a partial sorting algorithm that rearranges elements in [first, last) such that:
-The element pointed at by nth is changed to whatever element would occur in that position if [first, last) was sorted.
-All of the elements before this new nth element are less than or equal to the elements after the new nth element.
-
-nth_element (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare); 
+2) `nth_element` : (similar to partition algo) (Not Stable)  
+nth_element is a partial sorting algorithm that rearranges elements in [first, last) such that:  
+The element pointed at by nth is changed to whatever element would occur in that position if [first, last) was sorted.  
+All of the elements before this new nth element are less than or equal to the elements after the new nth element.  
+`nth_element (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare);`   
 // put the best 20 elements at the front of widgets, but don't worry about their order.
 
 3) For stable sorting use `stable_sort`
@@ -441,9 +440,9 @@ nth_element (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompar
 Partition range in two
 Rearranges the elements from the range [first,last), in such a way that all the elements 
 for which pred returns true precede all those for which it returns false. The iterator 
-returned points to the first element of the second group.
-`vector<Widget>::iterator goodEnd = partition(widgets.begin(), widgets.end(), hasAcceptableQuality);`
-// move all widgets satisfying hasAcceptableQuality to the front of widgets, 
+returned points to the first element of the second group.  
+`vector<Widget>::iterator goodEnd = partition(widgets.begin(), widgets.end(), hasAcceptableQuality);`  
+// move all widgets satisfying hasAcceptableQuality to the front of widgets,   
 // and return an iterator to the first widget that isn't satisfactory.
 
 ------------------------------------------------------------------
