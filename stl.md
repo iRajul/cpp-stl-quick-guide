@@ -1,94 +1,256 @@
-Made this guide as a notes after reading Effective STL by scott meyers
+>> Made this guide as a notes after reading Effective STL by scott meyers
+
+==================================
+CONTAINERS
+==================================
+
+### Item 1. Choose your containers with care.
+1) The standard STL sequence containers, vector, string, deque, and list.
+2) The standard STL associative containers, set, multiset, map and multimap.
+3) `vector<char>` as a replacement for `string`. (Item 13)
+4) vector as a replacement for the standard associative containers. (Item 23)
+
+* Contiguous-memory containers - vector, string, deque (random access iterators)
+* Node-based containers store only a single element per chunk : list + all associative continers.
+
+Do you need to minimize iterator, pointer, and reference invalidation? If so, you'll want to use node-based containers.
+
+---
+
+### Item 2. Beware the illusion of container-independent code.
+We strive to write container-independent code. Like writing code using vector 
+but still preserve the option of replacing it with something like a deque or a list later.
+
+This should be avoid bcoz many methods are avialable for only one type of containers.
+Insert signature is different for sequence and associative containers.
+The different containers are different, and they have strengths and 
+weaknesses that vary in significant ways. They're not designed to be interchangeable,
+
+-----------------------------------------------------
+### Item 3. Make copying cheap and correct for objects in containers.
+When you insert or get object from stl container they return copy of object. Copy in, copy out.
+
+* If you have user-defined object that has heavy copy operation, then think about it.
+* Objec Slicing : if you create a container of base class objects and you try to insert derived class objects into it, the derived-ness of the objects will be removed as the objects are copied (via the base class copy constructor) into the container.
+
+An easy way to make copying efficient, correct, and immune to the slicing problem is to create containers of pointers instead of containers of objects.
+
+------------------------------------------------------
+
+### Item 4. Call empty() instead of checking size() against zero.
+* `empty` is a constant-time operation for all standard containers, but for some 
+list implementations, `size` takes linear time.
+
+---
+
+### Item 5. Prefer range member functions to their single-element counterparts.
+
+Given two vectors, v1 and v2, what's the easiest way to make v1’s contents be the same as the second half of v2's?
+```
+// assign range flavour
+v1.assign(v2.begin() + v2.size() /2, v2.end()); 
+// insert range flavour
+v1.insert(v1 .end(), v2.begin() + v2.size() / 2, v2.end()); 
+```
+why use range member function?
+* It's generally less work to write the code using the range member functions.
+* Range member functions tend to lead to code that is clearer and more straightforward.
+* using range leads to one function call and using loop leads to n-1 extra function calls.
+* they are more efficient than regular loops.
+
+Range construction:  All standard containers offer a constructor of this form:
+`container::container( Inputlterator begin, Inputlterator end);`
+
+Range insertion :
+1) Sequence Container:
+`void container::insert(iterator position, Inputlterator begin, InputIterator end);`
+2) Associative container:
+`void container::insert(lnputIterator begin, Inputlterator end);`
+Range erasure: 
+1) Sequence containers :
+`iterator container::erase(iterator begin, iterator end);`
+2) Associative containers :
+`void container::erase(iterator begin, iterator end);`
+Range assignment: 
+1) Sequence Container:
+`void container::assign(lnputIterator begin, Inputlterator end);`
+
+-----------------------------------------------------
+
+### Item 6. Be alert for C++'s most vexing parse.
+TODO
+
+-----------------------------------------------------
+
+### Item 7. When using containers of newed pointers, remember to delete the 
+pointers before the container is destroyed.
+
+* Either delete all elements of container using loop or use smart pointer to store elements.
+
+-----------------------------------------------------
+
+### Item 8. Never create containers of auto_ptrs.
+* `auto_ptr` transfer their ownership to caller. so never use them!!
+
+-----------------------------------------------------
+
+### Item 9. Choose carefully among erasing options.
+
+1) Get rid of all the objects in c with the value 1963
+* For String, vector, deque
+`c.erase( remove(c.begin(), c.end(), 1963), c.end()); // the erase-remove idiom`
+
+* For List 
+`c.remove(1963);`
+
+* For Associative containers:
+`c.erase(1963);`
+>> the associative container erase member function has the advantage of being based on equivalence instead of equality,  a distinction whose importance is explained in Item 19.
+
+2) Eliminate every object for which the following predicate (see Item 39) returns true:
+* For vector, string, deque
+`c.erase(remove_if(c.begin(), c.end(), badValue), c.end());`
+
+* For List 
+`c.remove_if(badValue);`
+
+* For associative containers:
+* >> Less Efficient:
+`remove_copy_if(c.begin(), c.end(), inserter( goodValues, goodValues.end()), badValue):`
+// copy unremoved values from c to goodValues
+c.swap(goodValues):
+
+* More efficient: 
+```
+AssocContainer<int> c;
+for (AssocContainer<int>::iterator i = c.begin(); i != c.end(); ){
+	if (badValue(*I)) c.erase(i++); 
+	else ++i; 
+}
+//the 3rd part of the for loop is empty; i is now incremented below for bad values, pass the current i to erase and increment i as a side effect; for good values, just increment i
+```
+To do something inside the loop (in addition to erasing objects):
+* If the container is a standard sequence container, write a loop to walk the container elements, being sure to update your iterator with erase's return value each time von call it.
+* If the container is a standard associative container, write a loop to walk the container elements, being sure to postincrement your iterator when you pass it to erase.
+
+---
+
+### Item 10
+TODO
+
+---
+
+### Item 11
+TODO
+
+---
+
+### Item 12
+TODO
+
+---
+
+
+
+
+
 ==================================
 STRING AND VECTOR
 ==================================
 
-Item 13. Prefer vector and string to dynamically allocated arrays.
-string implementation may involve refernce counting so must see their document or use vector<char>
------------------------------------------------------
+### Item 13. Prefer vector and string to dynamically allocated arrays.
+string implementation may involve refernce counting so must see their document or use `vector<char>`
 
-Item 14. Use reserve to avoid unnecessary reallocations.
+---
+### Item 14. Use reserve to avoid unnecessary reallocations.
 
+```
 vector<int> v;
 v.reserve(1000);
 for (int i = 1; i <= 1000; ++i) v.push_back(i);
+```
 This should result in zero reallocations during the loop.
 
 Reallocation in vector invalidate iterators, pointer and references
 
 There are two common ways to use reserve to avoid unneeded reallocations. 
->> The first is applicable when you know exactly or approximately how many elements will ultimately end up in your container. 
+* The first is applicable when you know exactly or approximately how many elements will ultimately end up in your container. 
 In that case, as in the vector code above, you simply reserve the appropriate amount of space in advance. 
 
->> The second way is to reserve the maximum space you could ever need. then, once you've added all your data, trim off any excess capacity.
+* The second way is to reserve the maximum space you could ever need. then, once you've added all your data, trim off any excess capacity.
 
 --------------------------------------------------------
 
-Item 15. Be aware of variations in string implementations. 
+### Item 15. Be aware of variations in string implementations. 
 Different vendors can have different implementation of string.
 string objects may range in size from one to at least seven times the size of char* pointers.
 
 --------------------------------------------------------
 
-Item 16. Know how to pass vector and string data to legacy APIs.
+### Item 16. Know how to pass vector and string data to legacy APIs.
 For vector:
+```
 if (!v.empty()) {
 doSomething(&v[0], v.size());
 }
-Beware : Dont use v.begin() in place of &v[0]
+```
+>> Beware : Dont use v.begin() in place of &v[0]
 
 For string:
-c_str()
+`c_str()`
 
 The approach to getting a pointer to container data that works for vectors isn't reliable for strings, because 
-(1) the data for strings are not guaranteed to be stored in contiguous memory, and 
-(2) the internal representation of a string is not guaranteed to end with a null character.
+1) the data for strings are not guaranteed to be stored in contiguous memory, and 
+2) the internal representation of a string is not guaranteed to end with a null character.
 
 ----------------------------------------------------------
 
-Item 17. Use "the swap trick" to trim excess capacity
+### Item 17. Use "the swap trick" to trim excess capacity
 //shrink to fit
+```
 vector<Contestant>(contestants).swap(contestants); 
 string(s).swap(s);
-
+```
 To clear container : 
+```
 vector<Contestant> v;
 string s;
 vector<Contestant>().swap(v); //clear v and minimize its capacity
 string().swap(s); // clear s and minimize its capacity
+```
+---
 
-----------------------------------------------------------
-
-Item 18. Avoid using vector<bool>:
-Two things wrong with vector<bool>. 
+### Item 18. Avoid using vector<bool>:
+Two things wrong with `vector<bool>`. 
 First, it's not an STL container. 
 Second, it doesn't hold bools.
-
+```
 vector<bool> v;
 bool *pb = &v[0]; // error! the expression on the right is of type vector<bool>::reference*, not bool*
-Because it won't compile, vector<bool> fails to satisfy the requirements for STL containers.
+```
+Because it won't compile, `vector<bool>` fails to satisfy the requirements for STL containers.
 
 Alternative to use : 
-deque<bool> // it would not allocate in contiguous manner like vector.
-bitset
+* `deque<bool> // it would not allocate in contiguous manner like vector.`
+* `bitset`
 
-----------------------------------------------------------
-
+---
 
 =====================================
 ASSOCIATIVE CONTAINER
 =====================================
-
-Item 19. Understand the difference between equality and equivalence.
-equality, which is based on operator==
-Equivalence is based on the relative ordering of object values in a sorted range. !c.key_comp()(x, y) && !c.key_comp()(y, x)
+### Item 19. Understand the difference between equality and equivalence.
+Equality, which is based on `operator==`
+Equivalence is based on the relative ordering of object values in a sorted range.
+`!c.key_comp()(x, y) && !c.key_comp()(y, x)`
 The standard associative containers are kept in sorted order, so each container must have a comparison function (less, by default) that defines how to keep things sorted.
 
----------------------------------------------------------
+---
 
-Item 20. Specify comparison types for associative containers of pointers.
+### Item 20. Specify comparison types for associative containers of pointers.
 Anytime you create associative containers of pointers, figure you're probably going to have to specify the container's comparison type, too. 
 Most of the time, your comparison type will just dereference the pointers and compare the pointed-to objects.
+```
 struct DereferenceLess {
 template <typename PtrType>
 bool operator()(PtrType pT1, // parameters are passed by
@@ -97,29 +259,32 @@ bool operator()(PtrType pT1, // parameters are passed by
 		return *pT1 < *pT2;
 	}
 };
+```
 
-
-Usage : set<string*, DereferenceLess> ssp;
-
----------------------------------------------------------
-
-Item 21. Always have comparison functions return false for equal values.
+Usage : `set<string*, DereferenceLess> ssp;`
 
 ---------------------------------------------------------
 
-Item 22. Avoid in-place key modification in set and multiset.
+### Item 21. Always have comparison functions return false for equal values.
+
+---------------------------------------------------------
+
+### Item 22. Avoid in-place key modification in set and multiset.
 
 Key is const in map and multimap but it is non-const in set and multi-set but some vendors provide const key in set too. 
 
 Dont modify key in set as it can corrupt sorting order of keys in set.
 If you want to modify content of key which is not  a part of comparator then do it like this: 
+```
 if (i != se.end()) { // cast away
 	const_cast<Employee&>(*i).setTitle("Corporate Deity"); //constness
 }
+```
 Use "Employee&" not "Employee" because by using "Employee" it will modify temporary object not actual object.
 
 Or 
 Follow five step process:
+```
 EmplDSet::iterator i =
 se.find(selectedlD); // Step 1: find element to change
 
@@ -129,6 +294,7 @@ if(i!=se.end()){
 	e.setTitle("Corporate Deity"); // Step 4: modify the copy
 	se.insert(i, e); // Step 5: insert new value; hint that its location is the same as that of the
 }
+```
 ------------------------------------------------------------
 
 Item 23. Consider replacing associative containers with sorted vectors.
@@ -157,11 +323,12 @@ m.insert(
 	IntWidgetMap::value_type(k, v)).first->second = v; // use insert to update k's value to be v
 
 -------------------------------------------------------------
+
 Item 25 : hash_map, hash_set 
+
 TODO
 
 --------------------------------------------------------------
-
 =========================
 ITERATORS
 =========================
@@ -223,6 +390,7 @@ v.erase(++ri).base()); // erase the element pointed to by ri; this should always
 Item 29 : TODO
 
 ---------------------------------------------------------------
+
 ============================
 ALGORITHMS
 ============================
@@ -279,3 +447,6 @@ vector<Widget>::iterator goodEnd = partition(widgets.begin(), widgets.end(), has
 // and return an iterator to the first widget that isn't satisfactory.
 
 ------------------------------------------------------------------
+
+Item 32. Follow remove-like algorithms by erase if you really want to remove something.
+
