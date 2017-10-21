@@ -290,12 +290,12 @@ if(i!=se.end()){
 ```
 ------------------------------------------------------------
 
-Item 23. Consider replacing associative containers with sorted vectors.
+### Item 23. Consider replacing associative containers with sorted vectors.
 
 Assuming our data structures are big enough, they'll be split across multiple memory pages, but the vector will require fewer pages than the associative container.
 Bottom Line : 
 Storing data in a sorted vector is likely to consume less memory than storing the same data in a standard associative container, and searching a sorted vector via binary search is likely to be faster than searching a standard associative container when page faults are taken into account.
-You need to write comparator for pair<key,value> if you choose vector instead of associative container.
+You need to write comparator for `pair<key,value>` if you choose vector instead of associative container.
 
 When to use sorted vector over associative containers:
 your program uses the data structure in the phased manner that is first only insertions and then only lookups
@@ -303,21 +303,21 @@ It makes sense to consider using a sorted vector instead of an associative conta
 
 -------------------------------------------------------------
 
-Item 24. Choose carefully between map::operator[] and map-insert when efficiency is important
+### Item 24. Choose carefully between map::operator[] and map-insert when efficiency is important
 when an "add" is performed, map-insert saves you three function calls: 
 1) one to create a temporary default-constructed Widget object, 
 2) one to destruct that temporary object, and 
 3) one to Widget's assignment operator.
 
-operator[] is preferable when updating the value of an element that's already in the map.	
-m[k] = v; // use operator[] to update k's value to be v
+`operator[]` is preferable when updating the value of an element that's already in the map.	
+`m[k] = v; // use operator[] to update k's value to be v`
 
-m.insert(
-	IntWidgetMap::value_type(k, v)).first->second = v; // use insert to update k's value to be v
+`m.insert(
+	IntWidgetMap::value_type(k, v)).first->second = v; // use insert to update k's value to be v`
 
 -------------------------------------------------------------
 
-Item 25 : hash_map, hash_set 
+### Item 25 : hash_map, hash_set 
 
 TODO
 
@@ -325,14 +325,14 @@ TODO
 
 ### ITERATORS
 
-Item 26. Prefer iterator to const iterator, reverse_iterator, and const_reverse_iterator.
+### Item 26. Prefer iterator to const iterator, reverse_iterator, and const_reverse_iterator.
 
 1) Some versions of insert and erase require iterators. 
-	If you want to call those functions, you're going to have to produce iterators, const and reverse iterators won't do.
-	Example :
-	iterator insert(iterator position, const T& x);
-	iterator erase(iterator position);
-	iterator erase(iterator rangeBegin, iterator rangeEnd);
+* If you want to call those functions, you're going to have to produce iterators, const and reverse iterators won't do.
+** Example :
+** iterator insert(iterator position, const T& x);
+** iterator erase(iterator position);
+** iterator erase(iterator rangeBegin, iterator rangeEnd);
 	
 2) It's not possible to implicitly convert a const iterator to an iterator, and 
 	the technique described in Item 27 for generating an iterator from a const_iterator is neither universally applicable nor guaranteed to be efficient.
@@ -340,84 +340,94 @@ Item 26. Prefer iterator to const iterator, reverse_iterator, and const_reverse_
 3) Conversion from a reverse_iterator to an iterator may require iterator adjustment after the conversion. Item 28 explains when and why.
 
 4) comparison of const iterator with non-const iterator would not compile.
-	if (ci == i) // not compile.
-	if (i == ci) // It works though 
+* if (ci == i) // not compile.
+* if (i == ci) // It works though 
 
 --------------------------------------------------------------
 
-Item 27. Use distance and advance to convert a container's const_iterators to iterators.
+### Item 27. Use distance and advance to convert a container's const_iterators to iterators.
 
-Iter i(const_cast<lter>(ci));// It would not compile because const_iterator and iterator are of different type except for string and vector.
+`Iter i(const_cast<lter>(ci)); ` // It would not compile because const_iterator and iterator are of different type except for string and vector.
 
 Make a non-const iterator and move it to where const iterator is pointing.
+```
 Iter i(d.begin()); // initialize i to d.begin() 
 advance(i, distance<ConstIter>(i, ci));//figure the distance between i and ci (as const_iterators), then move i that distance.
+```
 We need to specify "ConstIter" while calling distance because type of argument for distance function should be same.
 
--------------------------------------------------------------- 
+---
 
-Item 28. Understand how to use a reverse_iterator's base iterator.
+### Item 28. Understand how to use a reverse_iterator's base iterator.
 
 Lets say there is vector of 5 element
+```
 |--------------------
 | 1 | 2 | 3 | 4 | 5 |
 |--------------------
+```
 
-vector<int>::reverse_iterator ri = // make ri point to the 3
+```vector<int>::reverse_iterator ri = // make ri point to the 3
 find(v.rbegin(), v.rend(), 3);
 vector<int>::iterator i(ri.base());// it points to 4
+```
 
 1) For insertion : using reverse_iterator we insert using ri.base().
+```
 |-------------------------
 | 1 | 2 | 3 | 99 | 4 | 5 |
 |-------------------------
+```
 Example  : Insert 99 at position of 3 from right to left.
-ri.begin would do the trick.
+`ri.begin would do the trick.`
 
 2) For deletion : Delete the element pointed by ri.
-v.erase(++ri).base()); // erase the element pointed to by ri; this should always compile.
+`v.erase(++ri).base()); // erase the element pointed to by ri; this should always compile.`
 
 ---------------------------------------------------------------
 
-Item 29 : TODO
+### Item 29 : TODO
 
 ---------------------------------------------------------------
 
 ### ALGORITHMS
 
-Item 30. Make sure destination ranges are big enough.
+### Item 30. Make sure destination ranges are big enough.
 
 Transform:
+```
 vector<int> results; // apply transmogrify to
 transform(values.begin(), values.end(), //each object in values,
 back_inserter(results), //inserting the return
 transmogrify);
-
+```
 Use reserve to save time in allocation using:
-results.reserve(results.size() + values.size());
+`results.reserve(results.size() + values.size());`
 
 Then use back_inserter, front_inserter , inserter.
 
 If enough space is there in result and you want to overwrite result than you can use:
+```
 transform(values.begin(), values.end(), // overwrite the first
 results.begin(), // values.size() elements of
 transmogrify);
+```
 
 -----------------------------------------------------------------
 
-Item 31. Know your sorting options.
+### Item 31. Know your sorting options.
 
-1) partial_sort:(Not stable)
+1) `partial_sort`:(Not stable)
 Rearranges the elements in the range [first,last), in such a way that the
 elements before middle are the smallest elements in the entire range and 
 are sorted in ascending order, while the remaining elements are left 
 without any specific order.
 
-partial_sort (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare);
+`partial_sort (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare);`
 // put the best 20 elements (in order) at the front of widgets.
 
 If all you care about is that the 20 best but don't care order of 20 element than use nth_element.
-2) nth_element:(similar to partition algo)(Not Stable)
+2) `nth_element`:(similar to partition algo)(Not Stable)
 nth_element is a partial sorting algorithm that rearranges elements in [first, last) such that:
 The element pointed at by nth is changed to whatever element would occur in that position if [first, last) was sorted.
 All of the elements before this new nth element are less than or equal to the elements after the new nth element.
@@ -425,18 +435,18 @@ All of the elements before this new nth element are less than or equal to the el
 nth_element (widgets.begin(), widgets.begin() + 20, widgets.end(), qualityCompare); 
 // put the best 20 elements at the front of widgets, but don't worry about their order.
 
-3) For stable sorting use stable_sort
+3) For stable sorting use `stable_sort`
 
-4) partition and stable_partition
+4) `partition` and `stable_partition`
 Partition range in two
 Rearranges the elements from the range [first,last), in such a way that all the elements 
 for which pred returns true precede all those for which it returns false. The iterator 
 returned points to the first element of the second group.
-vector<Widget>::iterator goodEnd = partition(widgets.begin(), widgets.end(), hasAcceptableQuality);
+`vector<Widget>::iterator goodEnd = partition(widgets.begin(), widgets.end(), hasAcceptableQuality);`
 // move all widgets satisfying hasAcceptableQuality to the front of widgets, 
 // and return an iterator to the first widget that isn't satisfactory.
 
 ------------------------------------------------------------------
 
-Item 32. Follow remove-like algorithms by erase if you really want to remove something.
+### Item 32. Follow remove-like algorithms by erase if you really want to remove something.
 
