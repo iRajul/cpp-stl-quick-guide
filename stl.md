@@ -330,11 +330,11 @@ TODO
 ### Item 26. Prefer iterator to const iterator, reverse_iterator, and const_reverse_iterator.
 
 1) Some versions of insert and erase require iterators. 
-* If you want to call those functions, you're going to have to produce iterators, const and reverse iterators won't do.
-** Example :
-** iterator insert(iterator position, const T& x);
-** iterator erase(iterator position);
-** iterator erase(iterator rangeBegin, iterator rangeEnd);
+* If you want to call those functions, you're going to have to produce iterators, const and reverse iterators won't do.  
+Example :
+	* iterator insert(iterator position, const T& x);
+	* iterator erase(iterator position);
+	* iterator erase(iterator rangeBegin, iterator rangeEnd);
 	
 2) It's not possible to implicitly convert a const iterator to an iterator, and 
 	the technique described in Item 27 for generating an iterator from a const_iterator is neither universally applicable nor guaranteed to be efficient.
@@ -353,8 +353,10 @@ TODO
 
 Make a non-const iterator and move it to where const iterator is pointing.
 ```
-Iter i(d.begin()); // initialize i to d.begin() 
-advance(i, distance<ConstIter>(i, ci));//figure the distance between i and ci (as const_iterators), then move i that distance.
+// initialize i to d.begin()
+Iter i(d.begin()); 
+//figure the distance between i and ci (as const_iterators), then move i that distance.
+advance(i, distance<ConstIter>(i, ci));
 ```
 We need to specify "ConstIter" while calling distance because type of argument for distance function should be same.
 
