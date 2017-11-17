@@ -148,7 +148,68 @@ When exit(0) is used to exit from program, destructors for locally scoped non-st
 Calling destructors is sometimes important, for example, if destructor has code to release resources like closing files.
     
     
+gets() is risky to use!
+it suffers from Buffer Overflow as gets() doesn’t do any array bound testing.
+ 
+use fgets
+char str[MAX_LIMIT];
+fgets(str, MAX_LIMIT, stdin);
+   
+little endian and big endian
+   
+memory layout in c
+   
+structure padding in structure 
+   
 
 
 
 
+Reference to dynamic memory allocation :
+int& foo = *(new int);
+
+ l-values are objects that have a defined memory address (such as variables), and persist beyond a single expression. r-values are temporary values that do not have a defined memory address, and only have expression scope.
+ 
+ References to r-values extend the lifetime of the referenced value
+ int somefcn()
+{
+    const int &ref = 2 + 3; // normally the result of 2+3 has expression scope and is destroyed at the end of this statement
+    // but because the result is now bound to a reference to a const value...
+    std::cout << ref; // we can use it here
+} // and the lifetime of the r-value is extended to here, when the const reference dies
+
+
+
+because the void pointer does not know what type of object it is pointing to, it cannot be dereferenced directly! 
+cout << *voidPtr << endl; // illegal: cannot dereference a void pointer
+
+Function return types are not considered for uniqueness for overloading 
+
+
+How function calls are matched with overloaded functions1) First, C++ tries to find an exact match. This is the case where the actual argument exactly matches the parameter type of one of the overloaded functions. For example:
+
+void print(char *value);
+void print(int value)
+
+
+2) If no exact match is found, C++ tries to find a match through promotion.
+Char, unsigned char, and short is promoted to an int.
+Unsigned short can be promoted to int or unsigned int, depending on the size of an int
+Float is promoted to double
+Enum is promoted to int
+
+
+all literal floating point values are doubles unless they have the ‘f’ suffix
+
+
+The default constructor allows us to create objects of the class, but does not do any initialization or assignment of values to the class members itself.
+
+you could initialize class variables in three ways: copy, direct, and via uniform initialization
+
+Initializing array members with member initializer lists
+Something(): m_array {} // zero the member array
+
+
+Member initializer lists allow us to initialize our members rather than assign values to them. This is the only way to initialize members that require values upon initialization, such as const or reference members, and it can be more performant than assigning values in the body of the constructor. Member initializer lists work both with fundamental types and members that are classes themselves.
+
+if we make each function return *this, we can chain the calls together
