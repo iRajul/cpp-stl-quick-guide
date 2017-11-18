@@ -123,12 +123,12 @@ The volatile keyword is intended to prevent the compiler from applying any optim
 
 Example:
 const int local = 10;
-    int *ptr = (int*) &local;
-    printf("Initial value of local : %d \n", local);
-    *ptr = 100;
-    
-    ------------------------------------------
-    
+int *ptr = (int*) &local;
+printf("Initial value of local : %d \n", local);
+*ptr = 100;
+
+------------------------------------------------
+
 Memory layout of c program:
 malloc
 calloc
@@ -142,12 +142,10 @@ EOF, getc() and feof() in C
 fopen() for an existing file in write mode (wx mode like w)
 
 
-
 return statement vs exit() in main()
 When exit(0) is used to exit from program, destructors for locally scoped non-static objects are not called. But destructors are called if return 0 is used.
 Calling destructors is sometimes important, for example, if destructor has code to release resources like closing files.
-    
-    
+
 gets() is risky to use!
 it suffers from Buffer Overflow as gets() doesn’t do any array bound testing.
  
@@ -213,3 +211,34 @@ Something(): m_array {} // zero the member array
 Member initializer lists allow us to initialize our members rather than assign values to them. This is the only way to initialize members that require values upon initialization, such as const or reference members, and it can be more performant than assigning values in the body of the constructor. Member initializer lists work both with fundamental types and members that are classes themselves.
 
 if we make each function return *this, we can chain the calls together
+
+
+ 3 types of relationships: composition, aggregation, and association.
+ 
+ 
+ relationship - Dependencies
+ A dependency occurs when one object invokes another object’s functionality in order to accomplish some specific task. This is a weaker relationship than an association, but still, any change to the dependent object may break functionality in the caller. A dependency is always a unidirectional relationship.
+ example :  Our classes that use std::cout use it in order to accomplish the task of printing something to the console, but not otherwise.
+ 
+ 
+Change access specifier of class:
+you can change access specifier of base memeber the derived class would normally be able to access.
+
+Multiple inheritance problem. 
+1. Ambiguity in calling function with same name which are present in multiple base classes 
+2. Diamond problem. (solution using virtual base.)
+
+Dont call virtual function from construtor and destructor.
+use override and final 
+object slicing and frakenobject. 
+
+We cannot have references in vector . 
+
+dynamic_cast is not possible with protected and private inhertiance and class without virtual function.
+
+dynamic_cast with references throw a std::bad_cast instead of returning NULL;
+
+
+
+ 
+ 
