@@ -239,6 +239,23 @@ dynamic_cast is not possible with protected and private inhertiance and class wi
 dynamic_cast with references throw a std::bad_cast instead of returning NULL;
 
 
+Internal and external linkage: 
+external linkage means the symbol (function or global variable) is accessible throughout your program and internal linkage means that it's only accessible in one translation unit.
 
- 
+You can explicitly control the linkage of a symbol by using the extern and static keywords. If the linkage isn't specified then the default linkage is extern for non-const symbols and static (internal) for const symbols.
+
+// in namespace or global scope
+int i; // extern by default
+const int ci; // static by default
+extern const int eci; // explicitly extern
+static int si; // explicitly static
+
+// the same goes for functions (but there are no const functions)
+int foo(); // extern by default
+static int bar(); // explicitly static
+
+
+
+
+
  
