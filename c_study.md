@@ -225,52 +225,64 @@ Unsigned short can be promoted to int or unsigned int, depending on the size of 
 Float is promoted to double
 Enum is promoted to int
 
+* The default constructor allows us to create objects of the class, but does not do any initialization or assignment of values to the class members itself.
 
+* you could initialize class variables in three ways: copy, direct, and via uniform initialization
+   `Fraction six = Fraction(6);` 
+   `Fraction six(6);`
+   
+* Initializing array members with member initializer lists
+   `Something(): m_array {} // zero the member array`
 
-The default constructor allows us to create objects of the class, but does not do any initialization or assignment of values to the class members itself.
+* Member initializer lists allow us to initialize our members rather than assign values to them. This is the only way to initialize members that require values upon initialization, such as **const or reference members**, and it can be more performant than assigning values in the body of the constructor. Member initializer lists work both with fundamental types and members that are classes themselves.
 
-you could initialize class variables in three ways: copy, direct, and via uniform initialization
+* if we make each function return *this, we can chain the calls together
 
-Initializing array members with member initializer lists
-Something(): m_array {} // zero the member array
-
-
-Member initializer lists allow us to initialize our members rather than assign values to them. This is the only way to initialize members that require values upon initialization, such as const or reference members, and it can be more performant than assigning values in the body of the constructor. Member initializer lists work both with fundamental types and members that are classes themselves.
-
-if we make each function return *this, we can chain the calls together
-
-
- 3 types of relationships: composition, aggregation, and association.
+#### Inheritance and Composition
+3 types of relationships: composition, aggregation, and association.
  
- 
- relationship - Dependencies
- A dependency occurs when one object invokes another object’s functionality in order to accomplish some specific task. This is a weaker relationship than an association, but still, any change to the dependent object may break functionality in the caller. A dependency is always a unidirectional relationship.
- example :  Our classes that use std::cout use it in order to accomplish the task of printing something to the console, but not otherwise.
+relationship - Dependencies
+A dependency occurs when one object invokes another object’s functionality in order to accomplish some specific task. This is a weaker relationship than an association, but still, any change to the dependent object may break functionality in the caller. A dependency is always a unidirectional relationship.
+example :  Our classes that use std::cout use it in order to accomplish the task of printing something to the console, but not otherwise.
  
  
 Change access specifier of class:
 you can change access specifier of base memeber the derived class would normally be able to access.
 
-Multiple inheritance problem. 
+#### Multiple inheritance problem. 
 1. Ambiguity in calling function with same name which are present in multiple base classes 
 2. Diamond problem. (solution using virtual base.)
 
-Dont call virtual function from construtor and destructor.
-use override and final 
-object slicing and frakenobject. 
+* Dont call virtual function from construtor and destructor.
+* use override and final 
+* object slicing and frakenobject. 
+   ```
+   int main()
+{
+    Derived d1(5);
+    Derived d2(6);
+    Base &b = d2;
+ 
+    b = d1; // this line is problematic
+ 
+    return 0;
+}
+```
+   Only base class part get copied because `operator=` is not virtual by default.
+* We cannot have references in vector . 
 
-We cannot have references in vector . 
-
-dynamic_cast is not possible with protected and private inhertiance and class without virtual function.
-
-dynamic_cast with references throw a std::bad_cast instead of returning NULL;
+#### dynamic_cast
+* dynamic_cast is not possible with protected and private inhertiance and class without virtual function.
+* dynamic_cast with references throw a std::bad_cast instead of returning NULL;
 
 
-Internal and external linkage: 
-external linkage means the symbol (function or global variable) is accessible throughout your program and internal linkage means that it's only accessible in one translation unit.
+#### Internal and external linkage: 
+**external linkage** means the symbol (function or global variable) is accessible throughout your program and **internal linkage** means that it's only accessible in one translation unit.
 
 You can explicitly control the linkage of a symbol by using the extern and static keywords. If the linkage isn't specified then the default linkage is extern for non-const symbols and static (internal) for const symbols.
 
+Example:
+```
 // in namespace or global scope
 int i; // extern by default
 const int ci; // static by default
@@ -280,7 +292,7 @@ static int si; // explicitly static
 // the same goes for functions (but there are no const functions)
 int foo(); // extern by default
 static int bar(); // explicitly static
-
+```
 
 
 
