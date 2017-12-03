@@ -193,15 +193,16 @@ TODO
 int& foo = *(new int);
 
 l-values are objects that have a defined memory address (such as variables), and persist beyond a single expression. r-values are temporary values that do not have a defined memory address, and only have expression scope.
- 
- References to r-values extend the lifetime of the referenced value
- int somefcn()
+
+References to r-values extend the lifetime of the referenced value
+```
+int somefcn()
 {
     const int &ref = 2 + 3; // normally the result of 2+3 has expression scope and is destroyed at the end of this statement
     // but because the result is now bound to a reference to a const value...
     std::cout << ref; // we can use it here
 } // and the lifetime of the r-value is extended to here, when the const reference dies
-
+```
 #### Some Quick Points
 
 * because the void pointer does not know what type of object it is pointing to, it cannot be dereferenced directly! 
@@ -258,16 +259,14 @@ you can change access specifier of base memeber the derived class would normally
 * object slicing and frakenobject. 
    ```
    int main()
-{
+   {
     Derived d1(5);
     Derived d2(6);
     Base &b = d2;
- 
     b = d1; // this line is problematic
- 
     return 0;
-}
-```
+   }
+   ```
    Only base class part get copied because `operator=` is not virtual by default.
 * We cannot have references in vector . 
 
