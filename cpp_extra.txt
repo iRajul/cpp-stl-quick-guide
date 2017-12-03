@@ -89,7 +89,13 @@ Direct, uniform and copy initialization.
 conversion constructor which take atleast one parameter.
 
 
-
+Function Overloading and float in C++: 
+ As per C++ standard, floating point literals (compile time constants) are treated as double unless explicitly specified by a suffix
+ 
+ 
+ Does overloading work with Inheritance?
+ Overloading doesn’t work for derived class in C++ programming language. There is no overload resolution between Base and Derived. The compiler looks into the scope of Derived.
+ q
 
 
 
