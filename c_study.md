@@ -65,14 +65,14 @@ And below memory allocation
 
 `struct employee *e = malloc(sizeof(*e) + sizeof(char) * 1024); `
 is equivalent to
-
+```
 struct employee
 {
     int     emp_id;
     int     name_len;
     char    name[1024]; /* character array of size 1024 */
 };
-
+```
 Other advantage of this is, suppose if we want to write data, we can write whole data by using single “write()” call. e.g.
 
 `write(fd, e, sizeof(*e) + name_len); /* write emp_id + name_len + name */ `
@@ -141,43 +141,58 @@ printf("Initial value of local : %d \n", local);
 TODO
 
 Dynamic Memory allocation in C:
-malloc
-calloc
-realloc
-Use of realloc()
+* malloc
+* calloc
+* realloc
+* Use of realloc()
 `void *realloc(void *ptr, size_t size);`
 
-File management:
-fseek() vs rewind() in C
-EOF, getc() and feof() in C
-fopen() for an existing file in write mode (wx mode like w)
+#### File management:
+* fseek() vs rewind() in C
+   `fseek()` sets the file position indicator of an input stream back to the beginning using rewind(). But there is no way to check whether the rewind() was successful.
+   ```
+   if(fseek(fp, 0L, SEEK_BEG) != 0){
+   //handle error
+   }
+   ```
+* EOF, getc() and feof() in C
+getc() can return EOF if any error occurs. 
+`foef()` is better choice.
+```
+if (feof(fp))
+     printf("\n End of file reached.");
+  else
+     printf("\n Something went wrong.");
+```
 
+* fopen() for an existing file in write mode (wx mode like w)
+* fgets() and gets() in C language
+   For reading a string value with spaces, we can use either gets() or fgets() in C programming language. Here, we will see what is the difference between gets() and fgets().
+   `fgets(char*, int n, FILE*);`
+   `gets(char*);`
+   There is no error array bound check in `gets()`;
+   gets() is risky to use!
+   it suffers from Buffer Overflow as gets() doesn’t do any array bound testing:
+   
+   * use fgets
+   ```
+   char str[MAX_LIMIT];
+   fgets(str, MAX_LIMIT, stdin);
+   ```
 
-return statement vs exit() in main()
+#### return statement vs exit() in main()
 When exit(0) is used to exit from program, destructors for locally scoped non-static objects are not called. But destructors are called if return 0 is used.
 Calling destructors is sometimes important, for example, if destructor has code to release resources like closing files.
 
-gets() is risky to use!
-it suffers from Buffer Overflow as gets() doesn’t do any array bound testing.
- 
-use fgets
-char str[MAX_LIMIT];
-fgets(str, MAX_LIMIT, stdin);
    
-little endian and big endian
-   
-memory layout in c
-   
-structure padding in structure 
+#### little endian and big endian
+TODO
    
 
-
-
-
-Reference to dynamic memory allocation :
+##### Reference to dynamic memory allocation :
 int& foo = *(new int);
 
- l-values are objects that have a defined memory address (such as variables), and persist beyond a single expression. r-values are temporary values that do not have a defined memory address, and only have expression scope.
+l-values are objects that have a defined memory address (such as variables), and persist beyond a single expression. r-values are temporary values that do not have a defined memory address, and only have expression scope.
  
  References to r-values extend the lifetime of the referenced value
  int somefcn()
@@ -187,19 +202,22 @@ int& foo = *(new int);
     std::cout << ref; // we can use it here
 } // and the lifetime of the r-value is extended to here, when the const reference dies
 
+#### Some Quick Points
 
+* because the void pointer does not know what type of object it is pointing to, it cannot be dereferenced directly! 
+   `cout << *voidPtr << endl; // illegal: cannot dereference a void pointer`
 
-because the void pointer does not know what type of object it is pointing to, it cannot be dereferenced directly! 
-cout << *voidPtr << endl; // illegal: cannot dereference a void pointer
+* Function return types are not considered for uniqueness for overloading 
 
-Function return types are not considered for uniqueness for overloading 
+* all literal floating point values are doubles unless they have the ‘f’ suffix
 
+#### How function calls are matched with overloaded functions
 
-How function calls are matched with overloaded functions1) First, C++ tries to find an exact match. This is the case where the actual argument exactly matches the parameter type of one of the overloaded functions. For example:
-
+1) First, C++ tries to find an exact match. This is the case where the actual argument exactly matches the parameter type of one of the overloaded functions. For example:
+```
 void print(char *value);
 void print(int value)
-
+```
 
 2) If no exact match is found, C++ tries to find a match through promotion.
 Char, unsigned char, and short is promoted to an int.
@@ -207,8 +225,6 @@ Unsigned short can be promoted to int or unsigned int, depending on the size of 
 Float is promoted to double
 Enum is promoted to int
 
-
-all literal floating point values are doubles unless they have the ‘f’ suffix
 
 
 The default constructor allows us to create objects of the class, but does not do any initialization or assignment of values to the class members itself.
