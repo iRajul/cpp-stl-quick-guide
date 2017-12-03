@@ -74,10 +74,10 @@ int main()
 * The `assignment (=), subscript ([]), function call (()), and member selection (->) operators` must be overloaded as member functions, because the language requires them to be.
 
 * The following rules of thumb can help you determine which form is best for a given situation:
-    If you’re overloading assignment (=), subscript ([]), function call (()), or member selection (->), do so as a member function.
-    If you’re overloading a unary operator, do so as a member function.
-    If you’re overloading a binary operator that modifies its left operand (e.g. operator+=), do so as a member function if you can.
-    If you’re overloading a binary operator that does not modify its left operand (e.g. operator+), do so as a normal function or friend function.
+	* If you’re overloading assignment (=), subscript ([]), function call (()), or member selection (->), do so as a member function.
+	* If you’re overloading a unary operator, do so as a member function.
+	* If you’re overloading a binary operator that modifies its left operand (e.g. operator+=), do so as a member function if you can.
+	* If you’re overloading a binary operator that does not modify its left operand (e.g. operator+), do so as a normal function or friend function.
 
 
 * overlaod post and preincrement operator ++ and --
