@@ -97,6 +97,26 @@ As per C++ standard, floating point literals (compile time constants) are treate
 Overloading doesn’t work for derived class in C++ programming language. There is no overload resolution between Base and Derived. The compiler looks into the scope of Derived.
  q
 
+#### Size of array without sizeof operator
+```
+	int arr[6];
+	int size = *(&arr + 1) - arr;
+```
 
+```
+&arr ==> Pointer to an array of 6 elements.
+
+(&arr + 1) ==> Address of 6 integers ahead as
+               pointer type is pointer to array
+               of 6 integers.
+
+*(&arr + 1) ==> Same address as (&arr + 1), but 
+                type of pointer is "int *".
+
+*(&arr + 1) - arr ==> Since *(&arr + 1) points 
+                   to the address 6 integers
+                   ahead of arr, the difference
+                   between two is 6.          
+```
 
 
