@@ -83,7 +83,10 @@ int main()
 * overlaod post and preincrement operator ++ and --
 
 * dont call subscript operator on pointer to an object.
-
+```
+    IntList *list = new IntList;
+    list [2] = 3; // error: this will assume we're accessing index 2 of an array of IntLists
+```
 * Direct, uniform and copy initialization. 
 
 * conversion constructor which take atleast one parameter.
