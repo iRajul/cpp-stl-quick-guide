@@ -273,7 +273,7 @@ you can change access specifier of base memeber the derived class would normally
 #### dynamic_cast
 * dynamic_cast is not possible with protected and private inhertiance and class without virtual function.
 * dynamic_cast with references throw a std::bad_cast instead of returning NULL;
-
+* Difference b/w dynamic and static cast : https://stackoverflow.com/a/2254183/1622022
 
 #### Internal and external linkage: 
 **external linkage** means the symbol (function or global variable) is accessible throughout your program and **internal linkage** means that it's only accessible in one translation unit.
