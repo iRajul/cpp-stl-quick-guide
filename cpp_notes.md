@@ -122,4 +122,91 @@ Overloading doesn’t work for derived class in C++ programming language. There 
                    between two is 6.          
 ```
 
+#### Inheritance and Composition
+3 types of relationships: composition, aggregation, and association.
+ 
+relationship - Dependencies
+A dependency occurs when one object invokes another object’s functionality in order to accomplish some specific task. This is a weaker relationship than an association, but still, any change to the dependent object may break functionality in the caller. A dependency is always a unidirectional relationship.
+example :  Our classes that use std::cout use it in order to accomplish the task of printing something to the console, but not otherwise.
+ 
+ 
+Change access specifier of class:
+you can change access specifier of base memeber the derived class would normally be able to access.
+
+#### Multiple inheritance problem. 
+1. Ambiguity in calling function with same name which are present in multiple base classes 
+2. Diamond problem. (solution using virtual base.)
+
+* Dont call virtual function from construtor and destructor.
+* use override and final 
+* object slicing and frakenobject. 
+   ```
+   int main()
+   {
+    Derived d1(5);
+    Derived d2(6);
+    Base &b = d2;
+    b = d1; // this line is problematic
+    return 0;
+   }
+   ```
+   Only base class part get copied because `operator=` is not virtual by default.
+* We cannot have references in vector . 
+
+#### dynamic_cast
+* dynamic_cast is not possible with protected and private inhertiance and class without virtual function.
+* dynamic_cast with references throw a std::bad_cast instead of returning NULL;
+* Difference b/w dynamic and static cast : https://stackoverflow.com/a/2254183/1622022
+
+
+##### Reference to dynamic memory allocation :
+int& foo = *(new int);
+
+l-values are objects that have a defined memory address (such as variables), and persist beyond a single expression. r-values are temporary values that do not have a defined memory address, and only have expression scope.
+
+References to r-values extend the lifetime of the referenced value
+```
+int somefcn()
+{
+    const int &ref = 2 + 3; // normally the result of 2+3 has expression scope and is destroyed at the end of this statement
+    // but because the result is now bound to a reference to a const value...
+    std::cout << ref; // we can use it here
+} // and the lifetime of the r-value is extended to here, when the const reference dies
+```
+#### Some Quick Points
+
+* because the void pointer does not know what type of object it is pointing to, it cannot be dereferenced directly! 
+   `cout << *voidPtr << endl; // illegal: cannot dereference a void pointer`
+
+* Function return types are not considered for uniqueness for overloading 
+
+* all literal floating point values are doubles unless they have the ‘f’ suffix
+
+#### How function calls are matched with overloaded functions
+
+1) First, C++ tries to find an exact match. This is the case where the actual argument exactly matches the parameter type of one of the overloaded functions. For example:
+```
+void print(char *value);
+void print(int value)
+```
+
+2) If no exact match is found, C++ tries to find a match through promotion.
+Char, unsigned char, and short is promoted to an int.
+Unsigned short can be promoted to int or unsigned int, depending on the size of an int
+Float is promoted to double
+Enum is promoted to int
+
+* The default constructor allows us to create objects of the class, but does not do any initialization or assignment of values to the class members itself.
+
+* you could initialize class variables in three ways: copy, direct, and via uniform initialization
+   `Fraction six = Fraction(6);` 
+   `Fraction six(6);`
+   
+* Initializing array members with member initializer lists
+   `Something(): m_array {} // zero the member array`
+
+* Member initializer lists allow us to initialize our members rather than assign values to them. This is the only way to initialize members that require values upon initialization, such as **const or reference members**, and it can be more performant than assigning values in the body of the constructor. Member initializer lists work both with fundamental types and members that are classes themselves.
+
+* if we make each function return *this, we can chain the calls together
+
 
