@@ -20,7 +20,7 @@ first parameter is name of function to call, and rest of the parameters are argu
 
 #### thread using lambda
 ```cpp
-	int step =10;
+    int step =10;
     vector<int> partial_sum(5, 0);
     vector<thread> threads;
     for(int i =0 ; i < 5 ; i++) {
