@@ -55,6 +55,9 @@ int left_bound(int[] nums) {
     return left;
 }
 ```
+### Problem 2.b
+https://leetcode.com/problems/search-insert-position/
+
 
 
 ### Problem 3 (Right Bound) (minimize mid for which condition remains true)
