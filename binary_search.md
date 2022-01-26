@@ -60,7 +60,7 @@ https://leetcode.com/problems/search-insert-position/
 
 
 
-### Problem 3 (Right Bound) (minimize mid for which condition remains true)
+### Problem 3 (Right Bound) (maximize mid for which condition remains true)
 ```cpp
 int right_bound(int[] nums, int target) {
     int left = 0, right = nums.length - 1;
